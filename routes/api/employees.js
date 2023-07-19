@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const employeesController = require('../../middleware/employeesController.js');
+const employeesController = require('../../controllers/employeesController.js');
 // const
 
 router.route('/')

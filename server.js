@@ -15,6 +15,7 @@ const connectDB = require('./config/dbConn.js');
 const PORT = process.env.PORT || 5001
 const root = require('./routes/root.js')
 const employees = require('./routes/api/employees.js')
+const upload = require('./routes/api/upload.js')
 const ngrokOptions = {
     addr: 5001,
     authtoken: process.env.NGROK_TOKEN,
@@ -30,10 +31,13 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cookieParser());
 app.use('/', express.static(path.join(__dirname, './public')))
+app.use('/files', express.static(path.join(__dirname, './public/images')))
+
 
 // Routes
 app.use('/', root);
 app.use('/employee', employees)
+app.use('/upload', upload)
 
 app.all("*", (req, res) => {
     res.status(404);
@@ -48,13 +52,20 @@ app.all("*", (req, res) => {
 
 app.use(errorHandler);
 
-mongoose.connection.once('open', () => {
-    console.log('Connected to MongoDB');
-    (async function () {
-        const url = await ngrok.connect(ngrokOptions);
-        console.log('Live : ', url)
-    })();
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-})
+// mongoose.connection.once('open', () => {
+//     console.log('Connected to MongoDB');
+//     (async function () {
+//         const url = await ngrok.connect(ngrokOptions);
+//         console.log('Live : ', url)
+//     })();
+//     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// })
 
-// app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+// ACCESS_TOKEN_SECRET = 8c5177a73d25109559d47c4ac5c756b12eedaced358720bc81c8825cd11b691f9677c6bd30d9f7f75d5545f8486cdb4255254dfa520299ea6d651a424869e72d
+// REFRESH_TOKEN_SECRET = 8382c517eb4eecab30df216c64c28e19fa48e13c611392075863838c83f18283aaf90b12008494ab67399838181f7d4faa1e676264bf2cb10a33b2d0ca0b776f
+// # DATABASE_URI = mongodb+srv://sarvesh:tc6colsnujubdbzi@cluster0.8clonjl.mongodb.net/
+// DATABASE_URI = mongodb+srv://capitallatera:kKxC5fDqpobUX1f8@cluster0.lqxm8ow.mongodb.net/
+// NGROK_TOKEN = 2SkKwVSz2pBG6TObg7DXvkcB125_54KtcjDzRcG1wQFPSWtNa
+// PORT= 5001
