@@ -16,6 +16,7 @@ const PORT = process.env.PORT || 5001
 const root = require('./routes/root.js')
 const employees = require('./routes/api/employees.js')
 const upload = require('./routes/api/upload.js')
+var LocalStorage = require('node-localstorage').LocalStorage;
 const ngrokOptions = {
     addr: 5001,
     authtoken: process.env.NGROK_TOKEN,
@@ -52,16 +53,26 @@ app.all("*", (req, res) => {
 
 app.use(errorHandler);
 
-// mongoose.connection.once('open', () => {
-//     console.log('Connected to MongoDB');
-//     (async function () {
-//         const url = await ngrok.connect(ngrokOptions);
-//         console.log('Live : ', url)
-//     })();
-//     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-// })
+if (typeof localStorage === "undefined" || localStorage === null) {
+    localStorage = new LocalStorage('./scratch');
+  }
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+let LIVELINK;
+if(process.env.LIVE == 'true'){
+    mongoose.connection.once('open', () => {
+        console.log('Connected to MongoDB');
+        (async function () {
+            const url = await ngrok.connect(ngrokOptions);
+            console.log('Live : ', url)
+            localStorage.setItem('STORELINK', `${url}`);
+        })();
+        app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    })
+} else {
+    localStorage.setItem('STORELINK', `http://localhost:${process.env.PORT}`);
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+}
+
 
 // ACCESS_TOKEN_SECRET = 8c5177a73d25109559d47c4ac5c756b12eedaced358720bc81c8825cd11b691f9677c6bd30d9f7f75d5545f8486cdb4255254dfa520299ea6d651a424869e72d
 // REFRESH_TOKEN_SECRET = 8382c517eb4eecab30df216c64c28e19fa48e13c611392075863838c83f18283aaf90b12008494ab67399838181f7d4faa1e676264bf2cb10a33b2d0ca0b776f
