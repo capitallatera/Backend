@@ -65,9 +65,16 @@ const getSingleFile = async(req, res) => {
     res.json(file);
 }
 
+const getAllFiles = async (req, res) => {
+    const files = await Content.find();
+    if(!files) return res.status(204).json({'message': 'No file found'});
+    res.json(files);
+}
+
 
 module.exports = {
     uploadFile,
     createNewFile,
-    getSingleFile
+    getSingleFile,
+    getAllFiles
 };

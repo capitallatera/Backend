@@ -15,7 +15,9 @@ const connectDB = require('./config/dbConn.js');
 const PORT = process.env.PORT || 5001
 const root = require('./routes/root.js')
 const employees = require('./routes/api/employees.js')
-const upload = require('./routes/api/upload.js')
+const upload = require('./routes/api/upload.js');
+const vegetables = require('./routes/api/vegetables.js');
+const inventory = require('./routes/api/inventory.js');
 var LocalStorage = require('node-localstorage').LocalStorage;
 const ngrokOptions = {
     addr: 5001,
@@ -39,6 +41,8 @@ app.use('/files', express.static(path.join(__dirname, './public/images')))
 app.use('/', root);
 app.use('/employee', employees)
 app.use('/upload', upload)
+app.use('/vegetable', vegetables)
+app.use('/inventory', inventory)
 
 app.all("*", (req, res) => {
     res.status(404);

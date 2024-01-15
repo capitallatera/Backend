@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const { uploadFile, createNewFile, getSingleFile } = require('../../controllers/uploadController.js');
+const { getAllFiles, createNewFile, getSingleFile } = require('../../controllers/uploadController.js');
 
 
 router.route('/')
+.get(getAllFiles)
 .post(createNewFile)
 
 router.route('/:id')
